@@ -1,0 +1,1 @@
+machinery health indicator 
