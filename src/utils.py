@@ -5,6 +5,7 @@ import pandas as pd
 import numpy as np
 import sys
 import os
+import pickle
 
 def read_raw_datafiles(file_path:str,bearing_number:int):
     '''
@@ -54,6 +55,22 @@ def calculate_fft(raw_data,fs=20000):
     x = abs(x)
 
     return x
+
+def save_object(file_path,obj):
+    try:
+        
+        dir_path = os.path.dirname(file_path)
+
+        os.makedirs(dir_path,exist_ok=True)
+
+        with open(file_path,"wb") as file_obj:
+            pickle.dump(obj,file_obj)
+
+    except Exception as e:
+        raise CustomException(e,sys)
+
+
+        
 
 
 
