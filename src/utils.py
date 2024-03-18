@@ -58,7 +58,7 @@ def calculate_fft(raw_data,fs=20000):
 
 def save_object(file_path,obj):
     try:
-        
+
         dir_path = os.path.dirname(file_path)
 
         os.makedirs(dir_path,exist_ok=True)
@@ -68,10 +68,6 @@ def save_object(file_path,obj):
 
     except Exception as e:
         raise CustomException(e,sys)
-
-
-        
-
 
 
 
