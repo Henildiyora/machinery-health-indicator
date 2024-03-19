@@ -50,13 +50,34 @@ def read_raw_datafiles(file_path:str,bearing_number:int):
 # print(read_file[0])
     
 def calculate_fft(raw_data,fs=20000):
+    '''
+    function calculate the FFT of raw signal 
+    Args:
+        raw_data : raw signal 
+        fs : sample rate 
+    
+    Return:
+        x : calculated fft of raw data 
+    '''
+    try:
 
-    x = np.fft.fft(raw_data)
-    x = abs(x)
+        x = np.fft.fft(raw_data)
+        x = abs(x)
+
+    except Exception as e:
+        raise CustomException(e,sys)
+
 
     return x
 
 def save_object(file_path,obj):
+    '''
+    function save any object into pickle file
+    Args:
+        file_path = file save location path
+        obj = which object want to save (scaler,model)
+
+    '''
     try:
 
         dir_path = os.path.dirname(file_path)
@@ -68,6 +89,22 @@ def save_object(file_path,obj):
 
     except Exception as e:
         raise CustomException(e,sys)
+    
+def load_object(file_path):
+    '''
+    function load the saved pickle 
+    '''
+    try:
+        with open(file_path,'rb') as file_obj:
+            file = pickle.load(file_obj)
+
+        return file
+    
+    except Exception as e:
+        raise CustomException(e,sys)
+
+
+
 
 
 
