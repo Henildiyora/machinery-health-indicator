@@ -24,11 +24,6 @@ class CalculateDistancesTrain:
 
             df_train = df_train.drop('Date',axis=1)
 
-            distances_list = []
-            percentile_distances = []
-            max_distances = []
-            min_distances = []
-
             if scaler == True:
 
                 scaler = load_object('save_scaler/scaler.pkl')
@@ -36,33 +31,18 @@ class CalculateDistancesTrain:
                 df_train = scaler.transform(df_train)
 
             # calculate the pairwise distance for each training data points
-            for i in range(len(df_train)):
-                distances = pairwise_distances(cluster_centers,df_train[i].reshape(1,-1),metric=metric)
-                distances_list.append(distances)
+            distances = pairwise_distances(df_train,cluster_centers,metric=metric)
 
-            # convert the list into array
-            convert_to_npArray = np.array(distances_list)
+            minimum_distances = np.min(distances, axis=1)
 
-            # convert the 3d array into 2d 
-            all_elements_2d = convert_to_npArray[:, :, 0]
-            train_minimum_distances = np.min(all_elements_2d, axis=1)
+            percentile_distance = np.percentile(distances,q=99.7,axis=0)
 
-            # store the each cluster distance into dict 
-            for i in range(len(cluster_centers)):
-
-                iter_values = list(all_elements_2d[:,i])
-
-                max_distance = np.max(iter_values)
-                min_distance = np.min(iter_values)
-                percentile_distance = np.percentile(iter_values,99.7)
-
-                min_distances.append(min_distance)
-                max_distances.append(max_distance)
-                percentile_distances.append(percentile_distance)
+            # calculate the soft threshold 
+            threshold = np.mean(percentile_distance)
 
             logging.info(f'{metric} distance calculation training data end')
 
-            return min_distances,max_distances,percentile_distances,train_minimum_distances
+            return minimum_distances,threshold
         
         except Exception as e:
             raise CustomException(e,sys)

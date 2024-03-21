@@ -21,26 +21,15 @@ class CalculateDistancesNewDataPoint:
 
             logging.info(f'{metric} distance calculation of new data start')
 
-            distances_list = []
-
             new_data = new_data.drop('Date',axis=1)
 
             if scaler == True:
                 scaler = load_object('save_scaler/scaler.pkl')
                 new_data = scaler.transform(new_data)
 
-            for i in range(len(new_data)):
-                distances = pairwise_distances(cluster_centers,new_data[i].reshape(1,-1),metric=metric)
-                distances_list.append(distances)
+            distances = pairwise_distances(new_data,cluster_centers,metric=metric)
 
-            # convert the list into array
-            convert_to_npArray = np.array(distances_list)
-
-            # convert the 3d array into 2d 
-            all_elements_2d = convert_to_npArray[:, :, 0]
-            min_distances = np.min(all_elements_2d, axis=1)
-
-            # print(f'min distances = \n{min_distances}')
+            min_distances = np.min(distances, axis=1)
 
             logging.info(f'{metric} distance calculation of new data finish')
 
