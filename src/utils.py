@@ -6,6 +6,7 @@ import numpy as np
 import sys
 import os
 import pickle
+import json
 
 def read_raw_datafiles(file_path:str,bearing_number:int):
     '''
@@ -29,7 +30,6 @@ def read_raw_datafiles(file_path:str,bearing_number:int):
         # List out all files
         files = os.listdir(file_path)
 
-        
         for file in sorted(files):
 
             read_file = np.loadtxt(os.path.join(file_path,file))
@@ -46,7 +46,7 @@ def read_raw_datafiles(file_path:str,bearing_number:int):
         raise CustomException(e,sys)
 
 
-# read_file = read_raw_datafiles('raw_data/2nd_test/2nd_test',1)
+# read_file = read_raw_datafiles('raw_data/1st_test/1st_test',2)
 # print(read_file[0])
     
 def calculate_fft(raw_data,fs=20000):
@@ -92,7 +92,7 @@ def save_object(file_path,obj):
     
 def load_object(file_path):
     '''
-    function load the saved pickle 
+    function load the saved pickle objects
     '''
     try:
         with open(file_path,'rb') as file_obj:
@@ -102,7 +102,52 @@ def load_object(file_path):
     
     except Exception as e:
         raise CustomException(e,sys)
+    
+def save_json(file_path,obj):
+    '''
+    function save any object into json file
+    '''
+    try:
+    
+        dir_path = os.path.dirname(file_path)
 
+        os.makedirs(dir_path,exist_ok=True)
+
+        with open(file_path,'w') as python_obj:
+            json.dump(obj,python_obj)
+    
+    except Exception as e:
+        raise CustomException(e,sys)
+    
+
+def load_json(file_path):
+
+    try:
+        
+        with open(file_path,'r') as python_obj:
+            file = json.load(python_obj)
+
+        return file
+    
+    except Exception as e:
+        raise CustomException(e,sys)
+
+def save_csv(df,file_path):
+
+    try:
+
+        dir_path = os.path.dirname(file_path)
+
+        os.makedirs(dir_path,exist_ok=True)
+
+        df.to_csv(file_path,index=False,header=True)
+
+    except Exception as e:
+        raise CustomException(e,sys)
+
+
+
+    
 
 
 

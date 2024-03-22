@@ -4,20 +4,21 @@ import os
 import sys
 import pandas as pd
 import numpy as np
-
-from dataclasses import dataclass
-
-@dataclass
-class DataIngestionConfig:
-    data_path:str = os.path.join('artifacts','data.csv')
+from src.utils import save_csv
 
 class Dataingestion:
 
-    def __init__(self):
-        self.dataIngestionConfig = DataIngestionConfig()
+    '''
+    devide the data into traiining and testing sets 
+    '''
+
+    def __init__(self,test_name,bearing_number):
+        self.test_name : str= test_name
+        self.bearing_number : int = bearing_number
+        self.dataPath = os.path.join('artifacts',f'{test_name}_bearing_{bearing_number}_data.csv')
 
 
-    def initiate_data_ingestion(self,train_date):
+    def initiate_data_ingestion(self,train_date,timedf_path,freqdf_path):
         '''
         Function to divide the data into training and testing sets.
 
@@ -34,10 +35,11 @@ class Dataingestion:
 
         try:
 
-            time_df = pd.read_csv('artifacts/timedomaian.csv')
+            # read the both csv file and drop date column in one csv file 
+            time_df = pd.read_csv(timedf_path)
             time_df = time_df.drop(columns='Date')
             
-            freq_df = pd.read_csv('artifacts/frequencydomain.csv')
+            freq_df = pd.read_csv(freqdf_path)
 
             df = pd.concat([time_df,freq_df],axis=1)
 
@@ -47,7 +49,7 @@ class Dataingestion:
             df_train = df[df['Date'] <= train_date]
             df_test = df[df['Date'] > train_date]
 
-            df.to_csv(self.dataIngestionConfig.data_path,index=False,header=True)
+            save_csv(df,file_path=self.dataPath)
 
             logging.info('Data ingestion finish')
 
@@ -57,12 +59,3 @@ class Dataingestion:
             raise CustomException(e,sys)
 
 
-# if __name__ == "__main__":
-    
-#     obj = Dataingestion()
-
-#     df_train,df_test,date = obj.initiate_data_ingestion(train_date='2004.02.12.11.12.39')
-#     print(f'df train = \n{df_train}')
-#     print(f'df_test = \n{df_test}')
-#     print(f'date = \n {date}')
-    

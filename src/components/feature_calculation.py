@@ -6,21 +6,18 @@ import pandas as pd
 import numpy as np
 from scipy.stats import skew, kurtosis
 
-from src.utils import read_raw_datafiles, calculate_fft
+from src.utils import read_raw_datafiles, calculate_fft , save_csv
 
-from dataclasses import dataclass
-
-@dataclass
-class FeatureCalculationConfig:
-    timedf_path:str = os.path.join('artifacts','timedomaian.csv')
-    freqdf_path:str = os.path.join('artifacts','frequencydomain.csv')
 
 class FeatureCalculation:
     '''
     calculate the timedomain and frequencydomain features 
     '''
-    def __init__(self):
-        self.featureCalculationConfig = FeatureCalculationConfig()
+    def __init__(self,test_name,bearing_number):
+        self.test_name : str = test_name
+        self.bearing_number : int= bearing_number
+        self.timedf_path = os.path.join('artifacts',f'{test_name}_bearing_{bearing_number}_timedomaian.csv')
+        self.freqdf_path = os.path.join('artifacts',f'{test_name}_bearing_{bearing_number}_frequencydomain.csv')
 
     def calculate_time_domain_features(self,file_path,bearing_number):
         '''
@@ -72,7 +69,7 @@ class FeatureCalculation:
             for index, date in enumerate(date):
                 time_df.loc[index, 'Date'] = date
 
-            time_df.to_csv(self.featureCalculationConfig.timedf_path,index=False,header=True)
+            save_csv(time_df,file_path=self.timedf_path)
 
             logging.info('time domain feature calculation finish')
 
@@ -128,7 +125,7 @@ class FeatureCalculation:
             for index, date in enumerate(date):
                 freq_df.loc[index, 'Date'] = date
 
-            freq_df.to_csv(self.featureCalculationConfig.freqdf_path,index=False,header=True)
+            save_csv(freq_df,file_path=self.freqdf_path)
 
             logging.info('frequency domain feature calculation finish')
 
@@ -137,23 +134,6 @@ class FeatureCalculation:
         except Exception as e:
             raise CustomException(e,sys)
     
-
-
-# if __name__ == "__main__":
-
-#     obj = FeatureCalculation()
-
-#     time_df = obj.calculate_time_domain_features(file_path='raw_data/2nd_test/2nd_test',bearing_number=1)
-#     freq_df = obj.cal_frequency_domain_features(file_path='raw_data/2nd_test/2nd_test',bearing_number=1)
-
-#     print(time_df)
-#     print(freq_df)
-
-    # import matplotlib.pyplot as plt
-    # time_df = pd.read_csv('artifacts/timedomaian.csv')
-    # freq_df = pd.read_csv('artifacts/frequencydomain.csv')
-    # plt.plot(freq_df['freq_variance_of_mean_frequency'])
-    # plt.show()
 
 
 

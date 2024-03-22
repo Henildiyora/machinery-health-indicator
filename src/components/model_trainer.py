@@ -13,76 +13,82 @@ import sys
 import pandas as pd
 import numpy as np
 
-from dataclasses import dataclass
 
+class ModelTraining:
 
-@dataclass
-class ModelTrainerConfig:
+    '''
+    train the clustering algorithem 
+    '''
 
-    save_model : str = os.path.join('save_models','model.pkl')
-    save_scaler :str = os.path.join('save_scaler','scaler.pkl')
+    def __init__(self,test_name,bearing_number):
+        self.test_name = test_name
+        self.bearing_number = bearing_number
+        self.save_model = os.path.join('save_models',f'{test_name}_bearing_{bearing_number}_model.pkl')
+        self.save_scaler = os.path.join('save_scaler',f'{test_name}_bearing_{bearing_number}_scaler.pkl')
 
-class TrainModel:
+    def model_training(self,df_train,df_test,n_cluster,scaler=None):
 
-    def __init__(self):
-        self.modeltrainconfig = ModelTrainerConfig()
+        '''
+        function train the model 
+        Args:
+            df_train : training data
+            df_test : testing data
+            n_cluster : number of cluster 
+            scaler : scaler for scale the data
 
-    def train_model(self,df_train,df_test,n_cluster,scaler=None):
+        Return:
+            df_label : predicted labels of training and testing data 
+            cluster_centers : cluster centroids value 
+        '''
+        try:
+            logging.info('model training start')
 
-        logging.info('model training start')
-
-        score_list = []
-        
-        df_train = df_train.drop('Date',axis=1)
-        df_test = df_test.drop('Date',axis=1)
-
-        if scaler is not None:
-
-            fitted_scaler = scaler.fit(df_train)
-
-            save_object(file_path=self.modeltrainconfig.save_scaler,
-                        obj=fitted_scaler
-                        )
+            score_list = []
             
-            df_train = fitted_scaler.transform(df_train)
+            df_train = df_train.drop('Date',axis=1)
+            df_test = df_test.drop('Date',axis=1)
 
-        for i in range(2,n_cluster):
+            if scaler is not None:
 
-            model = KMeans(n_clusters=i, random_state=42)
+                fitted_scaler = scaler.fit(df_train)
 
-            model.fit_predict(df_train)
+                save_object(file_path=self.save_scaler,
+                            obj=fitted_scaler
+                            )
+                
+                df_train = fitted_scaler.transform(df_train)
 
-            score = silhouette_score(df_train,model.labels_,metric='euclidean')
+            for i in range(2,n_cluster):
 
-            score_list.append(score)
+                model = KMeans(n_clusters=i, random_state=42)
 
-        opt_cluster = np.argmax(score) + 2
+                model.fit_predict(df_train)
 
-        k_means = KMeans(n_clusters=opt_cluster,random_state=42)
+                score = silhouette_score(df_train,model.labels_,metric='euclidean')
 
-        k_means.fit(df_train)
+                score_list.append(score)
 
-        save_object(file_path=self.modeltrainconfig.save_model,
-                    obj=k_means)
+            opt_cluster = np.argmax(score) + 2
+
+            k_means = KMeans(n_clusters=opt_cluster,random_state=42)
+
+            k_means.fit(df_train)
+
+            save_object(file_path=self.save_model,
+                        obj=k_means)
+            
+            df_train_output = k_means.predict(df_train)
+            df_test_output = k_means.predict(df_test)
+
+            df_label = np.concatenate((df_train_output,df_test_output))
+            cluster_centers = k_means.cluster_centers_
+
+            logging.info('model training end')
+
+            return df_label,cluster_centers
         
-        df_train_output = k_means.predict(df_train)
-        df_test_output = k_means.predict(df_test)
-
-        df_label = np.concatenate((df_train_output,df_test_output))
-        cluster_centers = k_means.cluster_centers_
-
-        logging.info('model training end')
-
-        return df_label,cluster_centers
-
-# if __name__ == "__main__":
-
-#     dataingestion = Dataingestion()
-#     df_train,df_test,date = dataingestion.initiate_data_ingestion(train_date='2004.02.15.13.12.39')
-
-#     trainmodel = TrainModel()
-#     scaler = StandardScaler()
-#     trainmodel.train_model(df_train=df_train,df_test=df_test,n_cluster=5,scaler=scaler)
+        except Exception as e:
+            raise CustomException(e,sys)
 
 
                 
