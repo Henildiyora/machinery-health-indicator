@@ -1,5 +1,13 @@
 ## Machinery Health Indicator 
 
+
+# Objective
+The objective of the project is to develop a machine health indicator capable of assessing real-time overall machine condition using a combination of machine learning and other techniques. This indicator should provide warnings when the machine experiences faults or a decrease in health status.
+
+# Approach Followed 
+Initially, various methods were explored, leading to the adoption of clustering algorithms. The k-means clustering algorithm was trained to accurately predict both healthy and faulty clusters. However, a challenge arose in distinguishing between healthy and faulty clusters. To address this, distance calculation logic was applied to clustered data. This involved iteratively determining cluster labels, retrieving associated centroids, and calculating Euclidean distances. By establishing mean values as soft thresholds for fault detection, warnings could be issued when new data points exceeded these thresholds during testing.
+ 
+ 
 About Dataset
 
 Dataset Description:
