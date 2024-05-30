@@ -1,5 +1,32 @@
 ## Machinery Health Indicator 
 
+### software and tools Requirements
+
+1. [Github Account](https://github.com)
+2. [VS Code IDE](https://code.visualstudio.com)
+3. [Time Series Bearing Dataset](https://www.kaggle.com/datasets/vinayak123tyagi/bearing-dataset)
+
+Create a new environment
+
+For conda environment
+```
+conda create -p venv python==3.10 -y
+```
+
+For activate conda environment
+```
+conda activate venv/
+```
+
+For venv environment
+```
+python3 -m venv bostonvenv
+```
+
+For activate venv environment(macos)
+```
+source bostonvenv/bin/activate
+```
 
 # Objective
 The objective of the project is to develop a machine health indicator capable of assessing real-time overall machine condition using a combination of machine learning and other techniques. This indicator should provide warnings when the machine experiences faults or a decrease in health status.
@@ -8,7 +35,7 @@ The objective of the project is to develop a machine health indicator capable of
 Initially, various methods were explored, leading to the adoption of clustering algorithms. The k-means clustering algorithm was trained to accurately predict both healthy and faulty clusters. However, a challenge arose in distinguishing between healthy and faulty clusters. To address this, distance calculation logic was applied to clustered data. This involved iteratively determining cluster labels, retrieving associated centroids, and calculating Euclidean distances. By establishing mean values as soft thresholds for fault detection, warnings could be issued when new data points exceeded these thresholds during testing.
  
  
-About Dataset
+# About Dataset
 
 Dataset Description:
 Four bearings were installed on a shaft. The rotation speed was kept constant at 2000 RPM by an AC motor coupled to the shaft via rub belts. A radial load of 6000 lbs is applied onto the shaft and bearing by a spring mechanism. All bearings are force lubricated.
