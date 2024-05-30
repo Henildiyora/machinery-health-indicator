@@ -6,7 +6,7 @@
 2. [VS Code IDE](https://code.visualstudio.com)
 3. [Time Series Bearing Dataset](https://www.kaggle.com/datasets/vinayak123tyagi/bearing-dataset)
 
-Create a new environment
+# Create a new environment
 
 For conda environment
 ```
@@ -70,6 +70,11 @@ Channel Arrangement: Bearing1 – Ch 1; Bearing2 – Ch 2; Bearing3 – Ch3; Bea
 File Recording Interval: Every 10 minutes
 File Format: ASCII
 Description: At the end of the test-to-failure experiment, outer race failure occurred in bearing 3.
+
+
+# How to RUN provided code 
+First go to src/pipeline and run runpipeline.py file 
+
 
 
 
